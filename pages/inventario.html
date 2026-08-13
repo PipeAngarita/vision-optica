@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>MagmaSoft – Inventario</title>
+<link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+<div id="topbar-placeholder"></div>
+<div class="app-shell">
+  <div id="sidebar-placeholder"></div>
+  <main class="main-content">
+    <div class="page-header">
+      <div>
+        <div class="page-title">Control de Inventario</div>
+        <div class="page-subtitle">Stock actual y movimientos de productos</div>
+      </div>
+      <div style="display:flex;gap:.6rem;">
+        <button class="btn btn-secondary" onclick="openModal('modal-movement')">📥 Registrar Movimiento</button>
+        <button class="btn btn-primary"   onclick="openModal('modal-add-stock')">+ Entrada de Stock</button>
+      </div>
+    </div>
+
+    <!-- KPIs -->
+    <div class="kpi-grid" id="inv-kpis"></div>
+
+    <!-- Alerts -->
+    <div id="inv-alerts" style="margin-bottom:1rem;"></div>
+
+    <!-- Toolbar -->
+    <div class="toolbar">
+      <div class="search-wrap">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="search-inv" class="form-control search-input" placeholder="Buscar producto o SKU...">
+      </div>
+      <div class="filter-tabs" id="inv-tabs">
+        <div class="filter-tab active" onclick="filterInv('Todos',this)">Todos</div>
+        <div class="filter-tab" onclick="filterInv('ok',this)">Stock OK</div>
+        <div class="filter-tab" onclick="filterInv('low',this)">Bajo mínimo</div>
+        <div class="filter-tab" onclick="filterInv('crit',this)">Sin stock</div>
+      </div>
+    </div>
+
+    <!-- Table -->
+    <div class="card">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Producto</th><th>SKU</th><th>Categoría</th><th>Disponible</th><th>Mínimo</th><th>Estado</th><th>Nivel</th><th>Acciones</th></tr>
+          </thead>
+          <tbody id="inv-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+<div id="bottom-nav-placeholder"></div>
+
+<!-- MODAL: Add stock -->
+<div class="modal-overlay" id="modal-add-stock">
+  <div class="modal" style="max-width:400px;">
+    <div class="modal-header">
+      <span class="modal-title">Entrada de Stock</span>
+      <button class="modal-close">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Producto *</label>
+        <select id="add-stock-prod" class="form-control">
+          <option value="">Seleccionar producto...</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Cantidad a Ingresar *</label>
+        <input type="number" id="add-stock-qty" class="form-control" placeholder="0" min="1">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Observaciones</label>
+        <textarea id="add-stock-obs" class="form-control" rows="2" placeholder="Ej: Compra a proveedor Ray-Ban"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-add-stock')">Cancelar</button>
+      <button class="btn btn-success" onclick="doAddStock()">Registrar Entrada</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Movement log -->
+<div class="modal-overlay" id="modal-movement">
+  <div class="modal" style="max-width:400px;">
+    <div class="modal-header">
+      <span class="modal-title">Registrar Movimiento</span>
+      <button class="modal-close">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Tipo de Movimiento *</label>
+        <select id="mov-type" class="form-control">
+          <option value="ENTRADA">Entrada (compra / devolución)</option>
+          <option value="SALIDA">Salida (venta / pérdida)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Producto *</label>
+        <select id="mov-prod" class="form-control">
+          <option value="">Seleccionar producto...</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Cantidad *</label>
+        <input type="number" id="mov-qty" class="form-control" placeholder="0" min="1">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Observaciones</label>
+        <textarea id="mov-obs" class="form-control" rows="2"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-movement')">Cancelar</button>
+      <button class="btn btn-primary" onclick="doMovement()">Registrar</button>
+    </div>
+  </div>
+</div>
+
+<script src="../js/app.js"></script>
+<script src="../js/components.js"></script>
+<script>
+let invFilter = 'Todos';
+let invSearch = '';
+
+function renderKpis() {
+  const ok   = MAGMA.products.filter(p=>p.stock>=p.min).length;
+  const low  = MAGMA.products.filter(p=>p.stock>0&&p.stock<p.min).length;
+  const crit = MAGMA.products.filter(p=>p.stock===0).length;
+  document.getElementById('inv-kpis').innerHTML = `
+    <div class="kpi-card"><div class="kpi-label">Total Productos</div><div class="kpi-value">${MAGMA.products.length}</div><div class="kpi-sub">En catálogo</div></div>
+    <div class="kpi-card kpi-green"><div class="kpi-label">Stock OK</div><div class="kpi-value">${ok}</div><div class="kpi-sub">Sobre el mínimo</div></div>
+    <div class="kpi-card kpi-orange"><div class="kpi-label">Stock Bajo</div><div class="kpi-value">${low}</div><div class="kpi-sub">Bajo el mínimo</div></div>
+    <div class="kpi-card kpi-red"><div class="kpi-label">Sin Stock</div><div class="kpi-value">${crit}</div><div class="kpi-sub">Requieren reabastecimiento</div></div>
+  `;
+}
+
+function renderAlerts() {
+  const probs = MAGMA.products.filter(p=>p.stock<p.min);
+  document.getElementById('inv-alerts').innerHTML = probs.length
+    ? `<div class="alert alert-warn">⚠️ <b>${probs.length} producto${probs.length>1?'s':''}</b> con stock por debajo del mínimo: ${probs.map(p=>`<b>${p.name}</b> (${p.stock}/${p.min})`).join(', ')}.</div>`
+    : `<div class="alert alert-success">✅ Todos los productos tienen stock suficiente.</div>`;
+}
+
+function filterInv(val, el) {
+  invFilter = val;
+  document.querySelectorAll('#inv-tabs .filter-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  renderTable();
+}
+
+function renderTable() {
+  let list = [...MAGMA.products];
+  if (invSearch) list = filterList(list, invSearch, ['name','sku','cat']);
+  if (invFilter==='ok')   list = list.filter(p=>p.stock>=p.min);
+  if (invFilter==='low')  list = list.filter(p=>p.stock>0&&p.stock<p.min);
+  if (invFilter==='crit') list = list.filter(p=>p.stock===0);
+
+  document.getElementById('inv-body').innerHTML = list.map(p=>{
+    let badge='', badgeClass='';
+    if (p.stock===0)       { badge='Sin stock';   badgeClass='chip-red'; }
+    else if(p.stock<p.min) { badge='Stock bajo';  badgeClass='chip-orange'; }
+    else                   { badge='OK';           badgeClass='chip-green'; }
+    return `
+      <tr>
+        <td><span class="fw-bold">${p.icon} ${p.name}</span></td>
+        <td style="color:#888;">${p.sku}</td>
+        <td style="color:#888;">${p.cat}</td>
+        <td class="fw-bold ${stockClass(p)}">${p.stock}</td>
+        <td style="color:#888;">${p.min}</td>
+        <td><span class="chip ${badgeClass}">${badge}</span></td>
+        <td>${progressBar(p)}</td>
+        <td>
+          <button class="btn btn-secondary btn-sm" onclick="quickAdd(${p.id})">+ Stock</button>
+        </td>
+      </tr>`;
+  }).join('');
+}
+
+function quickAdd(id) {
+  const p = MAGMA.products.find(x=>x.id===id);
+  if (!p) return;
+  document.getElementById('add-stock-prod').value = id;
+  openModal('modal-add-stock');
+}
+
+function doAddStock() {
+  const pid = parseInt(document.getElementById('add-stock-prod').value);
+  const qty = parseInt(document.getElementById('add-stock-qty').value);
+  if (!pid || !qty || qty<1) { showToast('Selecciona producto y cantidad válida','error'); return; }
+  const p = MAGMA.products.find(x=>x.id===pid);
+  if (p) { p.stock += qty; }
+  closeModal('modal-add-stock');
+  renderKpis(); renderAlerts(); renderTable();
+  showToast(`+${qty} unidades añadidas a ${p?.name||'producto'}`, 'success');
+}
+
+function doMovement() {
+  const type = document.getElementById('mov-type').value;
+  const pid  = parseInt(document.getElementById('mov-prod').value);
+  const qty  = parseInt(document.getElementById('mov-qty').value);
+  if (!pid || !qty || qty<1) { showToast('Completa todos los campos','error'); return; }
+  const p = MAGMA.products.find(x=>x.id===pid);
+  if (p) {
+    if (type==='ENTRADA') p.stock += qty;
+    else { if (p.stock < qty) { showToast('Stock insuficiente para la salida','error'); return; } p.stock -= qty; }
+  }
+  closeModal('modal-movement');
+  renderKpis(); renderAlerts(); renderTable();
+  showToast(`Movimiento registrado: ${type} de ${qty} unidades`, 'success');
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  // Populate selects
+  const opts = MAGMA.products.map(p=>`<option value="${p.id}">${p.icon} ${p.name}</option>`).join('');
+  document.getElementById('add-stock-prod').innerHTML += opts;
+  document.getElementById('mov-prod').innerHTML += opts;
+
+  renderKpis(); renderAlerts(); renderTable();
+
+  document.getElementById('search-inv').addEventListener('input', e => {
+    invSearch = e.target.value; renderTable();
+  });
+});
+</script>
+</body>
+</html>

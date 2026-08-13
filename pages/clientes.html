@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>MagmaSoft – Clientes</title>
+<link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+<div id="topbar-placeholder"></div>
+<div class="app-shell">
+  <div id="sidebar-placeholder"></div>
+  <main class="main-content">
+    <div class="page-header">
+      <div>
+        <div class="page-title">Gestión de Clientes</div>
+        <div class="page-subtitle">Registro y seguimiento de clientes de la óptica</div>
+      </div>
+      <button class="btn btn-primary" onclick="openModal('modal-new-client')">+ Registrar Cliente</button>
+    </div>
+
+    <div class="toolbar">
+      <div class="search-wrap">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="search-client" class="form-control search-input" placeholder="Buscar por nombre, documento o teléfono...">
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Nombre</th><th>Documento</th><th>Teléfono</th><th>Pedidos</th><th>Última Compra</th><th>Acciones</th></tr>
+          </thead>
+          <tbody id="client-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+<div id="bottom-nav-placeholder"></div>
+
+<!-- MODAL: New Client -->
+<div class="modal-overlay" id="modal-new-client">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">Registrar Cliente</span>
+      <button class="modal-close">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Nombre Completo *</label>
+          <input type="text" id="cli-name" class="form-control" placeholder="Nombre y apellido">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Tipo Documento</label>
+          <select class="form-control"><option>CC</option><option>CE</option><option>TI</option><option>Pasaporte</option></select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Número de Documento *</label>
+          <input type="text" id="cli-doc" class="form-control" placeholder="Ej: 1234567890">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Teléfono *</label>
+          <input type="tel" id="cli-phone" class="form-control" placeholder="Ej: 3001234567">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Correo Electrónico</label>
+          <input type="email" id="cli-email" class="form-control" placeholder="correo@ejemplo.com">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Fecha de Nacimiento</label>
+          <input type="date" id="cli-birth" class="form-control">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Dirección</label>
+        <input type="text" id="cli-addr" class="form-control" placeholder="Dirección de residencia">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Preferencia de Notificación</label>
+        <select class="form-control"><option>Email</option><option>SMS</option><option>Ambos</option></select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-new-client')">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveClient()">Guardar Cliente</button>
+    </div>
+  </div>
+</div>
+
+<script src="../js/app.js"></script>
+<script src="../js/components.js"></script>
+<script>
+const clients = [
+  { id:1, name:'Ana Torres',    doc:'1098765432', phone:'3112345678', orders:3, lastBuy:'10/05/2026' },
+  { id:2, name:'Luis Gómez',    doc:'1023456789', phone:'3201234567', orders:1, lastBuy:'10/05/2026' },
+  { id:3, name:'María López',   doc:'43567890',   phone:'3156789012', orders:5, lastBuy:'09/05/2026' },
+  { id:4, name:'Carlos Ruiz',   doc:'79234567',   phone:'3008765432', orders:2, lastBuy:'09/05/2026' },
+  { id:5, name:'Pedro Silva',   doc:'1056789123', phone:'3134567890', orders:4, lastBuy:'08/05/2026' },
+  { id:6, name:'Laura Vega',    doc:'1087654321', phone:'3017654321', orders:1, lastBuy:'07/05/2026' },
+  { id:7, name:'Sofía Mora',    doc:'1045678901', phone:'3123456789', orders:2, lastBuy:'06/05/2026' },
+  { id:8, name:'Diego Castro',  doc:'1078901234', phone:'3189012345', orders:1, lastBuy:'05/05/2026' },
+];
+let searchTerm = '';
+
+function renderClients() {
+  let list = [...clients];
+  if (searchTerm) list = list.filter(c =>
+    c.name.toLowerCase().includes(searchTerm) ||
+    c.doc.includes(searchTerm) ||
+    c.phone.includes(searchTerm)
+  );
+  document.getElementById('client-body').innerHTML = list.map(c=>`
+    <tr>
+      <td>
+        <div style="display:flex;align-items:center;gap:.6rem;">
+          <div style="width:32px;height:32px;border-radius:50%;background:#eaf2fb;display:flex;align-items:center;justify-content:center;font-weight:700;color:#1a3a5c;font-size:.82rem;">
+            ${c.name.split(' ').map(w=>w[0]).join('').slice(0,2)}
+          </div>
+          <span class="fw-bold">${c.name}</span>
+        </div>
+      </td>
+      <td style="color:#888;">${c.doc}</td>
+      <td>${c.phone}</td>
+      <td style="color:#2c7bb6;font-weight:700;">${c.orders}</td>
+      <td style="color:#888;">${c.lastBuy}</td>
+      <td>
+        <button class="btn btn-secondary btn-sm">Ver Pedidos</button>
+        <button class="btn btn-outline btn-sm">Editar</button>
+      </td>
+    </tr>`).join('');
+}
+
+function saveClient() {
+  const name = document.getElementById('cli-name').value.trim();
+  const doc  = document.getElementById('cli-doc').value.trim();
+  if (!name || !doc) { showToast('Nombre y documento son obligatorios','error'); return; }
+  clients.unshift({ id:clients.length+1, name, doc, phone:document.getElementById('cli-phone').value||'—', orders:0, lastBuy:'—' });
+  closeModal('modal-new-client');
+  renderClients();
+  showToast(`Cliente ${name} registrado correctamente`, 'success');
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  renderClients();
+  document.getElementById('search-client').addEventListener('input', e => {
+    searchTerm = e.target.value.toLowerCase(); renderClients();
+  });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>MagmaSoft – Notificaciones</title>
+<link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+<div id="topbar-placeholder"></div>
+<div class="app-shell">
+  <div id="sidebar-placeholder"></div>
+  <main class="main-content">
+    <div class="page-header">
+      <div>
+        <div class="page-title">Notificaciones</div>
+        <div class="page-subtitle" id="notif-subtitle">Cargando...</div>
+      </div>
+      <div style="display:flex;gap:.6rem;">
+        <button class="btn btn-secondary" onclick="markAllRead()">✓ Marcar todas como leídas</button>
+        <button class="btn btn-primary" onclick="openModal('modal-new-notif')">+ Nueva Notificación</button>
+      </div>
+    </div>
+
+    <div class="filter-tabs" style="margin-bottom:1rem;" id="notif-filter-tabs">
+      <div class="filter-tab active" onclick="filterNotif('all',this)">Todas</div>
+      <div class="filter-tab" onclick="filterNotif('unread',this)">Sin leer</div>
+      <div class="filter-tab" onclick="filterNotif('info',this)">Info</div>
+      <div class="filter-tab" onclick="filterNotif('warning',this)">Alertas</div>
+      <div class="filter-tab" onclick="filterNotif('success',this)">Confirmaciones</div>
+    </div>
+
+    <div id="notif-list-container"></div>
+  </main>
+</div>
+<div id="bottom-nav-placeholder"></div>
+
+<!-- MODAL: Nueva Notificación -->
+<div class="modal-overlay" id="modal-new-notif">
+  <div class="modal" style="max-width:440px;">
+    <div class="modal-header">
+      <span class="modal-title">Enviar Notificación</span>
+      <button class="modal-close">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Destinatario</label>
+        <select class="form-control">
+          <option>Todos los clientes</option>
+          <option>Ana Torres</option><option>Luis Gómez</option>
+          <option>María López</option><option>Carlos Ruiz</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Tipo</label>
+        <select id="notif-type-sel" class="form-control">
+          <option value="info">Información</option>
+          <option value="success">Confirmación</option>
+          <option value="warning">Alerta</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Mensaje *</label>
+        <textarea id="notif-msg-input" class="form-control" rows="3" placeholder="Escribe el mensaje..."></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Canal</label>
+        <div style="display:flex;gap:.8rem;">
+          <label style="display:flex;align-items:center;gap:.3rem;font-size:.85rem;cursor:pointer;"><input type="checkbox" checked> Email</label>
+          <label style="display:flex;align-items:center;gap:.3rem;font-size:.85rem;cursor:pointer;"><input type="checkbox"> SMS</label>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-new-notif')">Cancelar</button>
+      <button class="btn btn-primary" onclick="sendNotif()">Enviar</button>
+    </div>
+  </div>
+</div>
+
+<script src="../js/app.js"></script>
+<script src="../js/components.js"></script>
+<script>
+let notifFilter = 'all';
+
+const typeIcon = { info:'ℹ️', success:'✅', warning:'⚠️', error:'❌' };
+const typeLabel = { info:'Información', success:'Confirmación', warning:'Alerta', error:'Error' };
+const typeChip = { info:'chip-blue', success:'chip-green', warning:'chip-orange', error:'chip-red' };
+
+function filterNotif(val, el) {
+  notifFilter = val;
+  document.querySelectorAll('#notif-filter-tabs .filter-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  renderNotifs();
+}
+
+function renderNotifs() {
+  let list = [...MAGMA.notifications];
+  if (notifFilter==='unread')  list = list.filter(n=>!n.read);
+  if (['info','success','warning'].includes(notifFilter)) list = list.filter(n=>n.type===notifFilter);
+
+  const unread = MAGMA.notifications.filter(n=>!n.read).length;
+  document.getElementById('notif-subtitle').textContent = `${MAGMA.notifications.length} notificaciones · ${unread} sin leer`;
+
+  document.getElementById('notif-list-container').innerHTML = list.length
+    ? list.map((n,i)=>`
+      <div class="card mb-1" style="opacity:${n.read?.6:1};transition:.2s;" id="notif-card-${i}">
+        <div class="card-body" style="display:flex;align-items:flex-start;gap:.8rem;padding:.9rem 1.1rem;">
+          <div style="font-size:1.4rem;flex-shrink:0;">${typeIcon[n.type]||'ℹ️'}</div>
+          <div style="flex:1;">
+            <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.2rem;">
+              <span class="chip ${typeChip[n.type]||'chip-blue'}">${typeLabel[n.type]||'Info'}</span>
+              <span class="text-sm text-muted">${n.time}</span>
+              ${!n.read?'<span class="chip chip-red" style="font-size:.65rem;">Nueva</span>':''}
+            </div>
+            <div style="font-size:.88rem;color:#333;">${n.msg}</div>
+          </div>
+          <div style="display:flex;gap:.4rem;flex-shrink:0;">
+            ${!n.read?`<button class="btn btn-secondary btn-sm" onclick="markRead(${i})">Leído</button>`:''}
+            <button class="btn btn-outline btn-sm" style="color:#c0392b;border-color:#c0392b;" onclick="deleteNotif(${i})">✕</button>
+          </div>
+        </div>
+      </div>`).join('')
+    : '<div class="text-center text-muted" style="padding:3rem;"><div style="font-size:2.5rem;margin-bottom:.5rem;">🔔</div>No hay notificaciones.</div>';
+}
+
+function markRead(i) {
+  MAGMA.notifications[i].read = true;
+  updateNotifBadge();
+  renderNotifs();
+}
+
+function markAllRead() {
+  MAGMA.notifications.forEach(n=>n.read=true);
+  updateNotifBadge();
+  renderNotifs();
+  showToast('Todas las notificaciones marcadas como leídas','success');
+}
+
+function deleteNotif(i) {
+  MAGMA.notifications.splice(i,1);
+  updateNotifBadge();
+  renderNotifs();
+}
+
+function sendNotif() {
+  const msg = document.getElementById('notif-msg-input').value.trim();
+  const type = document.getElementById('notif-type-sel').value;
+  if (!msg) { showToast('El mensaje no puede estar vacío','error'); return; }
+  MAGMA.notifications.unshift({ id: Date.now(), type, msg, read:false, time:'ahora' });
+  closeModal('modal-new-notif');
+  updateNotifBadge();
+  renderNotifs();
+  showToast('Notificación enviada correctamente','success');
+}
+
+document.addEventListener('DOMContentLoaded', renderNotifs);
+</script>
+</body>
+</html>

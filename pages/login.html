@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>MagmaSoft – Iniciar Sesión</title>
+<link rel="stylesheet" href="../css/styles.css">
+<style>
+  body { background:linear-gradient(135deg,#1a3a5c 0%,#1e4d7b 50%,#2c7bb6 100%); }
+  .deco-circle {
+    position:fixed; border-radius:50%; pointer-events:none; opacity:.18;
+    background:rgba(255,255,255,.15);
+  }
+</style>
+</head>
+<body class="login-page">
+  <div class="deco-circle" style="width:400px;height:400px;top:-100px;right:-80px;"></div>
+  <div class="deco-circle" style="width:250px;height:250px;bottom:-60px;left:-50px;"></div>
+
+  <div class="login-card">
+    <div class="login-header">
+      <div style="font-size:2.5rem;margin-bottom:.3rem;">👓</div>
+      <h1>MagmaSoft</h1>
+      <p>Sistema de Gestión para Óptica</p>
+    </div>
+    <div class="login-body">
+      <div style="font-size:.78rem;font-weight:700;color:#888;margin-bottom:.5rem;text-transform:uppercase;letter-spacing:.5px;">Ingresar como</div>
+      <div class="role-selector" id="roleSelector">
+        <button class="role-btn active" data-role="CLIENTE">Cliente</button>
+        <button class="role-btn"        data-role="EMPLEADO">Empleado</button>
+        <button class="role-btn"        data-role="ADMIN">Administrador</button>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Correo electrónico</label>
+        <input type="email" id="loginEmail" class="form-control" placeholder="usuario@correo.com" value="jf.angarita@magmasoft.co">
+      </div>
+      <div class="form-group" style="position:relative;">
+        <label class="form-label">Contraseña</label>
+        <input type="password" id="loginPass" class="form-control" placeholder="••••••••" value="admin123">
+        <button onclick="togglePass()" style="position:absolute;right:.8rem;top:2rem;background:none;border:none;cursor:pointer;color:#aaa;font-size:.85rem;">👁</button>
+      </div>
+
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
+        <label style="display:flex;align-items:center;gap:.4rem;font-size:.82rem;cursor:pointer;">
+          <input type="checkbox" checked> Recordarme
+        </label>
+        <a href="#" style="font-size:.82rem;">¿Olvidaste tu contraseña?</a>
+      </div>
+
+      <button class="btn btn-primary w-full btn-lg" onclick="doLogin()">Iniciar Sesión</button>
+
+      <div id="login-error" class="alert alert-danger mt-1 hidden">
+        Correo o contraseña incorrectos. Inténtalo de nuevo.
+      </div>
+
+      <div style="margin-top:1.3rem;padding-top:1rem;border-top:1px solid #eee;font-size:.78rem;color:#aaa;text-align:center;">
+        MagmaSoft · GA6-220501096-AA3-EV03 · Juan Felipe Angarita Rodriguez
+      </div>
+    </div>
+  </div>
+
+<script>
+  // Role selector
+  document.querySelectorAll('.role-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    });
+  });
+
+  function togglePass() {
+    const input = document.getElementById('loginPass');
+    input.type = input.type === 'password' ? 'text' : 'password';
+  }
+
+  function doLogin() {
+    const email = document.getElementById('loginEmail').value.trim();
+    const pass  = document.getElementById('loginPass').value;
+    const err   = document.getElementById('login-error');
+    if (!email || !pass) { err.classList.remove('hidden'); return; }
+    err.classList.add('hidden');
+    // Simulate auth → redirect to dashboard
+    const btn = document.querySelector('.btn-primary');
+    btn.textContent = 'Ingresando...'; btn.disabled = true;
+    setTimeout(() => { window.location.href = '../index.html'; }, 800);
+  }
+
+  // Allow Enter key
+  document.addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+</script>
+</body>
+</html>
