@@ -1,0 +1,194 @@
+<!--
+  notificaciones.html
+  Modulo: Notificaciones - Proyecto MagmaSoft / VISION
+  Evidencia: GA7-220501096-AA4-EV03
+
+  Vista de notificaciones: formulario de envio (correo o SMS) con
+  plantillas automaticas segun el tipo de mensaje, e historial de
+  notificaciones enviadas.
+-->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>VISIÓN Óptica — Notificaciones</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Playfair+Display:wght@600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/variables.css"/>
+  <link rel="stylesheet" href="css/notificaciones.css"/>
+</head>
+<body>
+
+  <!-- Barra lateral de navegacion, compartida por dashboard/pedidos/notificaciones -->
+  <nav class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-row">
+      <div class="logo-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></div>
+      <div class="logo-text"><h2>VISIÓN</h2><span>ÓPTICA</span></div>
+    </div>
+  </div>
+  <div class="nav">
+    <span class="nav-label">Principal</span>
+    <a href="dashboard.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>Dashboard
+    </a>
+    <a href="pedidos.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg>Pedidos
+    </a>
+    <a href="#" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Clientes
+    </a>
+    <a href="#" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2"/></svg>Catálogo
+    </a>
+    <span class="nav-label">Gestión</span>
+    <a href="notificaciones.html" class="nav-item active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>Notificaciones
+    </a>
+    <a href="#" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Reportes
+    </a>
+  </div>
+  <div class="sidebar-user">
+    <div class="avatar">A</div>
+    <div class="user-info"><p>Administrador</p><span>admin@vision.com</span></div>
+    <a href="login.html" class="logout-btn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></a>
+  </div>
+</nav>
+
+<div class="main">
+  <div class="topbar">
+    <div><h1>Centro de Notificaciones</h1><p style="font-size:.75rem;color:#94a3b8;margin-top:2px;">Envía alertas y mensajes a tus clientes</p></div>
+  </div>
+  <div class="content">
+    <!-- Columna izquierda: formulario de envio | Columna derecha: historial -->
+    <div class="grid-layout">
+
+      <!-- Send form -->
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">Enviar Notificación</div>
+          <div class="panel-sub">Email o SMS directo al cliente</div>
+        </div>
+        <div class="panel-body">
+          <div class="form-group">
+            <label class="form-label">Cliente destinatario</label>
+            <select class="form-select">
+              <option value="">— Seleccionar cliente —</option>
+              <option>Ana García — 310-555-0101</option>
+              <option>Luis Torres — 321-555-0202</option>
+              <option>María López — 300-555-0303</option>
+              <option>Carlos Ruiz — 315-555-0404</option>
+              <option>Sofía Mora — 312-555-0505</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Canal de envío</label>
+            <div class="channel-row">
+              <label class="channel-opt selected" onclick="selectChannel(this)">
+                <input type="radio" name="canal" value="email" checked/>
+                <div class="ch-icon">📧</div>
+                <div class="ch-label">Correo electrónico</div>
+              </label>
+              <label class="channel-opt" onclick="selectChannel(this)">
+                <input type="radio" name="canal" value="sms"/>
+                <div class="ch-icon">💬</div>
+                <div class="ch-label">SMS / Mensaje de texto</div>
+              </label>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Tipo de notificación</label>
+            <select class="form-select" onchange="fillTemplate(this.value)">
+              <option value="">— Seleccionar tipo —</option>
+              <option value="listo">Lente listo para retirar</option>
+              <option value="modelo">Nuevo modelo disponible</option>
+              <option value="cita">Recordatorio de cita</option>
+              <option value="promo">Promoción especial</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Asunto</label>
+            <input class="form-input" type="text" id="asunto" placeholder="Ingrese el asunto del mensaje"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Mensaje</label>
+            <textarea class="form-textarea" id="mensaje" placeholder="Escriba el contenido del mensaje..."></textarea>
+          </div>
+          <button class="btn-send" onclick="sendNotif()">Enviar notificación →</button>
+          <button class="btn-bulk" onclick="sendBulk()">📢 Enviar a todos los clientes</button>
+        </div>
+      </div>
+
+      <!-- History -->
+      <div class="panel">
+        <div class="panel-header" style="display:flex;align-items:center;justify-content:space-between;">
+          <div>
+            <div class="panel-title">Historial de Notificaciones</div>
+            <div class="panel-sub">Últimos mensajes enviados</div>
+          </div>
+          <span style="background:#dbeafe;color:#1d4ed8;font-size:.72rem;font-weight:600;padding:4px 12px;border-radius:20px;">18 enviadas</span>
+        </div>
+        <table>
+          <thead>
+            <tr><th>Cliente</th><th>Tipo</th><th>Canal</th><th>Estado</th><th>Fecha</th></tr>
+          </thead>
+          <tbody id="historyTable">
+            <tr>
+              <td>Luis Torres<div class="td-sub">321-555-0202</div></td>
+              <td>Lente listo</td>
+              <td><span class="badge badge-email">📧 Email</span></td>
+              <td><span class="badge badge-sent">✅ Enviado</span></td>
+              <td>12/06 10:30</td>
+            </tr>
+            <tr>
+              <td>Sofía Mora<div class="td-sub">312-555-0505</div></td>
+              <td>Lente listo</td>
+              <td><span class="badge badge-sms">💬 SMS</span></td>
+              <td><span class="badge badge-sent">✅ Enviado</span></td>
+              <td>11/06 15:00</td>
+            </tr>
+            <tr>
+              <td>Todos los clientes</td>
+              <td>Nuevo modelo</td>
+              <td><span class="badge badge-email">📧 Email</span></td>
+              <td><span class="badge badge-sent">✅ Enviado</span></td>
+              <td>10/06 09:00</td>
+            </tr>
+            <tr>
+              <td>Ana García<div class="td-sub">310-555-0101</div></td>
+              <td>Recordatorio</td>
+              <td><span class="badge badge-sms">💬 SMS</span></td>
+              <td><span class="badge badge-sent">✅ Enviado</span></td>
+              <td>09/06 11:45</td>
+            </tr>
+            <tr>
+              <td>Carlos Ruiz<div class="td-sub">315-555-0404</div></td>
+              <td>Promoción</td>
+              <td><span class="badge badge-email">📧 Email</span></td>
+              <td><span class="badge badge-sent">✅ Enviado</span></td>
+              <td>08/06 08:00</td>
+            </tr>
+            <tr>
+              <td>María López<div class="td-sub">300-555-0303</div></td>
+              <td>Lente listo</td>
+              <td><span class="badge badge-email">📧 Email</span></td>
+              <td><span class="badge badge-sent">✅ Enviado</span></td>
+              <td>07/06 16:20</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Notificacion flotante de confirmacion (activada por showToast() en js/notificaciones.js) -->
+<div class="toast" id="toast">
+  <span>✅</span><span id="toastMsg">Notificación enviada correctamente</span>
+</div>
+
+<script src="js/notificaciones.js"></script>
+</body>
+</html>

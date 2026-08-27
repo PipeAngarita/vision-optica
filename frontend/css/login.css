@@ -1,0 +1,102 @@
+/**
+ * login.css
+ * Modulo: Login - Proyecto MagmaSoft / VISION
+ * Evidencia: GA7-220501096-AA4-EV03
+ *
+ * Estilos de la pantalla de inicio de sesion: fondo con efecto
+ * "glassmorphism", tarjeta central del formulario y accesos rapidos.
+ */
+
+/* Fondo de pantalla completa, centrado del contenido */
+body {
+      min-height: 100vh;
+      background: var(--navy);
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+    /* Animated background circles */
+    .bg-orb {
+      position: absolute; border-radius: 50%;
+      filter: blur(80px); opacity: 0.15;
+      animation: drift 12s ease-in-out infinite alternate;
+    }
+    .bg-orb:nth-child(1){ width:420px;height:420px; background:#3b8fe8; top:-80px; left:-100px; animation-delay:0s; }
+    .bg-orb:nth-child(2){ width:320px;height:320px; background:#c9a84c; bottom:-60px; right:-60px; animation-delay:-4s; }
+    .bg-orb:nth-child(3){ width:240px;height:240px; background:#1d5fa8; top:40%; left:60%; animation-delay:-8s; }
+    @keyframes drift { to { transform: translate(30px, 20px) scale(1.08); } }
+
+    /* Tarjeta central del formulario, con efecto de vidrio esmerilado */
+    .card {
+      position: relative; z-index: 10;
+      background: rgba(255,255,255,0.05);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 24px;
+      padding: 48px 44px;
+      width: 100%; max-width: 420px;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.4);
+      animation: slideUp 0.6s cubic-bezier(0.16,1,0.3,1) both;
+    }
+    @keyframes slideUp { from { opacity:0; transform:translateY(32px); } }
+
+    /* Logo circular con degradado, en la parte superior de la tarjeta */
+    .logo-ring {
+      width: 64px; height: 64px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--sky), var(--blue));
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 20px;
+      box-shadow: 0 0 0 8px rgba(59,143,232,0.15);
+    }
+    .logo-ring svg { width: 32px; height: 32px; }
+
+    h1 { font-family: 'Playfair Display', serif; color: #fff; font-size: 1.85rem; text-align: center; margin-bottom: 6px; }
+    .tagline { text-align:center; color: rgba(255,255,255,0.45); font-size:.85rem; margin-bottom: 36px; letter-spacing:.04em; }
+
+    /* Campos del formulario (usuario / contrasena) */
+    label { display:block; font-size:.78rem; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:rgba(255,255,255,0.55); margin-bottom:6px; }
+    .input-wrap { position:relative; margin-bottom:18px; }
+    input[type=text], input[type=password] {
+      width:100%; padding:13px 16px 13px 44px;
+      background:rgba(255,255,255,0.07);
+      border:1px solid rgba(255,255,255,0.12);
+      border-radius:12px; color:#fff; font-size:.9rem;
+      transition: all .2s;
+      outline: none;
+    }
+    input:focus { background:rgba(255,255,255,0.12); border-color: var(--sky); box-shadow: 0 0 0 3px rgba(59,143,232,0.2); }
+    input::placeholder { color: rgba(255,255,255,0.3); }
+    .input-icon { position:absolute; left:14px; top:50%; transform:translateY(-50%); color:rgba(255,255,255,0.35); }
+
+    /* Boton principal de ingreso */
+    .btn-primary {
+      width:100%; padding:14px;
+      background: linear-gradient(135deg, var(--sky) 0%, var(--blue) 100%);
+      border:none; border-radius:12px; color:#fff;
+      font-size:.95rem; font-weight:600; letter-spacing:.03em;
+      cursor:pointer; margin-top:8px;
+      transition: transform .15s, box-shadow .15s;
+      box-shadow: 0 8px 24px rgba(29,95,168,0.4);
+    }
+    .btn-primary:hover { transform:translateY(-2px); box-shadow:0 12px 32px rgba(29,95,168,0.55); }
+    .btn-primary:active { transform:translateY(0); }
+
+    .divider { display:flex; align-items:center; gap:12px; margin:22px 0; }
+    .divider span { flex:1; height:1px; background:rgba(255,255,255,0.1); }
+    .divider p { color:rgba(255,255,255,0.3); font-size:.78rem; }
+
+    /* Accesos rapidos de prueba (Administrador / Empleado) */
+    .roles { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+    .role-btn {
+      padding:10px; border-radius:10px; border:1px solid rgba(255,255,255,0.1);
+      background:rgba(255,255,255,0.04); color:rgba(255,255,255,0.55);
+      font-size:.78rem; font-weight:500; cursor:pointer; text-align:center;
+      transition:.2s;
+    }
+    .role-btn:hover { background:rgba(255,255,255,0.1); color:#fff; border-color:rgba(255,255,255,0.2); }
+
+    .forgot { display:block; text-align:center; margin-top:18px; color:rgba(255,255,255,0.4); font-size:.8rem; text-decoration:none; }
+    .forgot:hover { color: var(--sky); }
+
+    /* Insignia de version, esquina superior derecha de la tarjeta */
+    .badge { position:absolute; top:16px; right:16px; background: rgba(201,168,76,0.2); border:1px solid rgba(201,168,76,0.4); color: var(--gold); font-size:.7rem; font-weight:600; padding:3px 10px; border-radius:20px; letter-spacing:.06em; }

@@ -1,0 +1,44 @@
+ENLACE AL REPOSITORIO EN GITHUB
+════════════════════════════════════════════════════════
+
+Proyecto:   MagmaSoft-Vision – Sistema de Gestión para Óptica
+Evidencia:  GA7-220501096-AA5-EV03
+Aprendiz:   Juan Felipe Angarita Rodriguez
+Fecha:      Mayo 2026
+
+REPOSITORIO:
+  https://github.com/PipeAngarita/vision-optica
+
+MÓDULO DE ESTA EVIDENCIA:
+  https://github.com/PipeAngarita/vision-optica/tree/main/backend-api
+
+════════════════════════════════════════════════════════
+COMANDOS GIT PARA INTEGRAR ESTE MÓDULO
+════════════════════════════════════════════════════════
+
+# Clonar el repositorio existente
+git clone https://github.com/PipeAngarita/vision-optica.git
+cd vision-optica
+
+# Copiar la carpeta backend-api al repositorio
+# (ya debe estar dentro del ZIP entregado)
+
+# Agregar los archivos nuevos
+git add backend-api/
+
+# Commit con Conventional Commits
+git commit -m "feat(api): agregar modulo REST API GA7-AA5-EV03
+
+- PedidoApiServlet: GET/POST/PUT/PATCH/DELETE /api/pedidos
+- NotificacionApiServlet: GET/POST/PATCH/DELETE /api/notificaciones
+- ProductoApiServlet: GET/POST/PUT/DELETE /api/productos
+- HealthServlet: GET /api/health
+- CorsFilter: habilita llamadas desde el front-end
+- ApiResponse: respuestas JSON estandar
+- Modo demo activo cuando MySQL no esta disponible
+- DOCUMENTACION_API.md: documentacion completa de todos los servicios"
+
+# Subir al repositorio remoto
+git push origin main
+
+════════════════════════════════════════════════════════

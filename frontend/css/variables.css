@@ -1,0 +1,25 @@
+/**
+ * variables.css
+ * Proyecto MagmaSoft / VISION - Evidencia GA7-220501096-AA4-EV03
+ *
+ * Paleta de colores y reset global compartidos por las cuatro vistas
+ * del sistema (login, dashboard, pedidos, notificaciones).
+ */
+
+/* Paleta de colores corporativa y ancho fijo del sidebar */
+:root {
+  --navy:  #0f2744;  /* Fondo del sidebar y textos principales */
+  --blue:  #1d5fa8;  /* Botones y enlaces activos */
+  --sky:   #3b8fe8;  /* Estados hover / interaccion */
+  --frost: #e8f2fc;  /* Fondos suaves de estado seleccionado */
+  --gold:  #c9a84c;  /* Acentos de marca (avatar, badge de version) */
+  --sidebar-w: 220px;
+}
+
+/* Reset global: tipografia base y modelo de caja para todos los elementos */
+* {
+  font-family: 'DM Sans', sans-serif;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}

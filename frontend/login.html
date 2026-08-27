@@ -1,0 +1,73 @@
+<!--
+  login.html
+  Modulo: Login - Proyecto MagmaSoft / VISION
+  Evidencia: GA7-220501096-AA4-EV03
+
+  Pantalla de inicio de sesion del sistema VISION. Incluye el
+  formulario de acceso y botones de acceso rapido de prueba.
+-->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>VISIÓN Óptica — Iniciar Sesión</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/variables.css"/>
+  <link rel="stylesheet" href="css/login.css"/>
+</head>
+<body>
+  <!-- Circulos de fondo animados (efecto decorativo) -->
+  <div class="bg-orb"></div>
+  <div class="bg-orb"></div>
+  <div class="bg-orb"></div>
+
+  <!-- Tarjeta central: logo, formulario y accesos rapidos -->
+  <div class="card">
+    <span class="badge">v1.0</span>
+
+    <div class="logo-ring">
+      <!-- Eye icon -->
+      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+        <circle cx="12" cy="12" r="3"/>
+      </svg>
+    </div>
+
+    <h1>VISIÓN</h1>
+    <p class="tagline">Sistema de gestión para óptica</p>
+
+    <!-- Formulario de acceso: al enviarse, ejecuta handleLogin() (ver js/login.js) -->
+    <form onsubmit="handleLogin(event)">
+      <div>
+        <label>Usuario</label>
+        <div class="input-wrap">
+          <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          <input type="text" id="user" placeholder="Ingrese su usuario" autocomplete="username"/>
+        </div>
+      </div>
+      <div>
+        <label>Contraseña</label>
+        <div class="input-wrap">
+          <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          <input type="password" id="pass" placeholder="••••••••" autocomplete="current-password"/>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-primary">Ingresar al sistema</button>
+    </form>
+
+    <!-- Accesos rapidos: autocompletan el formulario con credenciales de prueba -->
+    <div class="divider"><span></span><p>acceso rápido</p><span></span></div>
+    <div class="roles">
+      <div class="role-btn" onclick="quickLogin('admin','admin123')">👤 Administrador</div>
+      <div class="role-btn" onclick="quickLogin('empleado','emp123')">🔧 Empleado</div>
+    </div>
+
+    <a href="#" class="forgot">¿Olvidaste tu contraseña?</a>
+  </div>
+
+  <script src="js/login.js"></script>
+</body>
+</html>

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee
+         http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
+         version="4.0">
+
+  <display-name>MagmaSoft-Vision REST API</display-name>
+
+  <!-- ══ FILTRO CORS (habilita llamadas desde el front-end) ══ -->
+  <filter>
+    <filter-name>CorsFilter</filter-name>
+    <filter-class>com.magmasoft.vision.api.filter.CorsFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>CorsFilter</filter-name>
+    <url-pattern>/api/*</url-pattern>
+  </filter-mapping>
+
+  <!-- ══ FILTRO ENCODING UTF-8 ══ -->
+  <filter>
+    <filter-name>EncodingFilter</filter-name>
+    <filter-class>com.magmasoft.vision.api.filter.EncodingFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>EncodingFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+
+  <!-- ══ API: Pedidos ══ -->
+  <servlet>
+    <servlet-name>PedidoApiServlet</servlet-name>
+    <servlet-class>com.magmasoft.vision.api.servlet.PedidoApiServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>PedidoApiServlet</servlet-name>
+    <url-pattern>/api/pedidos</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>PedidoApiServlet</servlet-name>
+    <url-pattern>/api/pedidos/*</url-pattern>
+  </servlet-mapping>
+
+  <!-- ══ API: Notificaciones ══ -->
+  <servlet>
+    <servlet-name>NotificacionApiServlet</servlet-name>
+    <servlet-class>com.magmasoft.vision.api.servlet.NotificacionApiServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>NotificacionApiServlet</servlet-name>
+    <url-pattern>/api/notificaciones</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>NotificacionApiServlet</servlet-name>
+    <url-pattern>/api/notificaciones/*</url-pattern>
+  </servlet-mapping>
+
+  <!-- ══ API: Productos / Catálogo ══ -->
+  <servlet>
+    <servlet-name>ProductoApiServlet</servlet-name>
+    <servlet-class>com.magmasoft.vision.api.servlet.ProductoApiServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>ProductoApiServlet</servlet-name>
+    <url-pattern>/api/productos</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>ProductoApiServlet</servlet-name>
+    <url-pattern>/api/productos/*</url-pattern>
+  </servlet-mapping>
+
+  <!-- ══ API: Health check ══ -->
+  <servlet>
+    <servlet-name>HealthServlet</servlet-name>
+    <servlet-class>com.magmasoft.vision.api.servlet.HealthServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>HealthServlet</servlet-name>
+    <url-pattern>/api/health</url-pattern>
+  </servlet-mapping>
+
+  <session-config>
+    <session-timeout>30</session-timeout>
+  </session-config>
+</web-app>

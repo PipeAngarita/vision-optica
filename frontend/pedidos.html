@@ -1,0 +1,184 @@
+<!--
+  pedidos.html
+  Modulo: Gestion de Pedidos - Proyecto MagmaSoft / VISION
+  Evidencia: GA7-220501096-AA4-EV03
+
+  Vista de gestion de pedidos: busqueda y filtrado por estado,
+  listado tabular con acciones por fila, y modal para el registro
+  de un nuevo pedido.
+-->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>VISIÓN Óptica — Pedidos</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Playfair+Display:wght@600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/variables.css"/>
+  <link rel="stylesheet" href="css/pedidos.css"/>
+</head>
+<body>
+
+  <!-- Barra lateral de navegacion, compartida por dashboard/pedidos/notificaciones -->
+  <nav class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-row">
+      <div class="logo-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></div>
+      <div class="logo-text"><h2>VISIÓN</h2><span>ÓPTICA</span></div>
+    </div>
+  </div>
+  <div class="nav">
+    <span class="nav-label">Principal</span>
+    <a href="dashboard.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>Dashboard
+    </a>
+    <a href="pedidos.html" class="nav-item active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg>Pedidos
+    </a>
+    <a href="#" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Clientes
+    </a>
+    <a href="#" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2"/></svg>Catálogo
+    </a>
+    <span class="nav-label">Gestión</span>
+    <a href="notificaciones.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>Notificaciones
+    </a>
+    <a href="#" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Reportes
+    </a>
+  </div>
+  <div class="sidebar-user">
+    <div class="avatar">A</div>
+    <div class="user-info"><p>Administrador</p><span>admin@vision.com</span></div>
+    <a href="login.html" class="logout-btn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></a>
+  </div>
+</nav>
+
+<div class="main">
+  <div class="topbar">
+    <div><h1>Gestión de Pedidos</h1><p style="font-size:.75rem;color:#94a3b8;margin-top:2px;">Registro y seguimiento de órdenes de lentes</p></div>
+  </div>
+  <div class="content">
+    <!-- Toolbar -->
+    <!-- Barra de herramientas: busqueda, filtros por estado y boton de nuevo pedido -->
+    <div class="toolbar">
+      <div class="search-wrap">
+        <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" placeholder="Buscar por cliente, ID o teléfono..." id="searchInput" oninput="filterTable()"/>
+      </div>
+      <button class="filter-btn active" onclick="setFilter(this,'todos')">Todos (24)</button>
+      <button class="filter-btn" onclick="setFilter(this,'proceso')">⏳ En proceso (11)</button>
+      <button class="filter-btn" onclick="setFilter(this,'listo')">✅ Listos (8)</button>
+      <button class="filter-btn" onclick="setFilter(this,'entregado')">📦 Entregados (5)</button>
+      <button class="btn-new" onclick="openModal()">+ Nuevo pedido</button>
+    </div>
+
+    <!-- Table -->
+    <!-- Tabla principal de pedidos, filtrada dinamicamente por js/pedidos.js -->
+    <div class="table-card">
+      <div class="table-header">
+        <span class="table-title">Lista de pedidos</span>
+        <span class="total-count" id="countLabel">Mostrando 8 de 24 pedidos</span>
+      </div>
+      <table>
+        <thead>
+          <tr><th>ID</th><th>Cliente</th><th>Tipo de lente</th><th>Médico</th><th>Estado</th><th>Fecha est.</th><th>Acciones</th></tr>
+        </thead>
+        <tbody id="tableBody">
+          <tr data-estado="proceso">
+            <td><strong>#001</strong></td>
+            <td>Ana García<div class="td-sub">310-555-0101</div></td>
+            <td>Bifocal</td><td>Dra. Martínez</td>
+            <td><span class="badge badge-proceso">⏳ En proceso</span></td>
+            <td>15/06/2024</td>
+            <td><div class="action-btns">
+              <button class="act-btn" title="Editar" onclick="openModal()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+              <button class="act-btn notify" title="Notificar"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg></button>
+            </div></td>
+          </tr>
+          <tr data-estado="listo">
+            <td><strong>#002</strong></td>
+            <td>Luis Torres<div class="td-sub">321-555-0202</div></td>
+            <td>Monofocal</td><td>Dr. Pérez</td>
+            <td><span class="badge badge-listo">✅ Listo</span></td>
+            <td>12/06/2024</td>
+            <td><div class="action-btns">
+              <button class="act-btn" title="Editar" onclick="openModal()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+              <button class="act-btn notify" title="Notificar"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg></button>
+            </div></td>
+          </tr>
+          <tr data-estado="proceso">
+            <td><strong>#003</strong></td>
+            <td>María López<div class="td-sub">300-555-0303</div></td>
+            <td>Progresivo</td><td>Dra. Ramírez</td>
+            <td><span class="badge badge-proceso">⏳ En proceso</span></td>
+            <td>18/06/2024</td>
+            <td><div class="action-btns">
+              <button class="act-btn" onclick="openModal()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+              <button class="act-btn notify"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg></button>
+            </div></td>
+          </tr>
+          <tr data-estado="entregado">
+            <td><strong>#004</strong></td>
+            <td>Carlos Ruiz<div class="td-sub">315-555-0404</div></td>
+            <td>Bifocal</td><td>Dr. Suárez</td>
+            <td><span class="badge badge-entregado">📦 Entregado</span></td>
+            <td>10/06/2024</td>
+            <td><div class="action-btns">
+              <button class="act-btn" onclick="openModal()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+            </div></td>
+          </tr>
+          <tr data-estado="listo">
+            <td><strong>#005</strong></td>
+            <td>Sofía Mora<div class="td-sub">312-555-0505</div></td>
+            <td>Monofocal</td><td>Dra. Gómez</td>
+            <td><span class="badge badge-listo">✅ Listo</span></td>
+            <td>20/06/2024</td>
+            <td><div class="action-btns">
+              <button class="act-btn" onclick="openModal()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+              <button class="act-btn notify"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg></button>
+            </div></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<!-- Modal de registro de nuevo pedido (oculto por defecto, se activa con openModal()) -->
+<div class="modal-overlay" id="modal" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="modal-title">Registrar nuevo pedido</div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Nombre del cliente</label><input class="form-input" type="text" placeholder="Ej: Ana García"/></div>
+      <div class="form-group"><label class="form-label">Teléfono</label><input class="form-input" type="text" placeholder="310-555-0000"/></div>
+    </div>
+    <div class="form-group"><label class="form-label">Correo electrónico</label><input class="form-input" type="email" placeholder="cliente@email.com"/></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Tipo de lente</label>
+        <select class="form-select">
+          <option>Monofocal</option><option>Bifocal</option><option>Progresivo</option><option>Ocupacional</option>
+        </select>
+      </div>
+      <div class="form-group"><label class="form-label">Médico tratante</label><input class="form-input" type="text" placeholder="Dr. Nombre"/></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Fecha estimada</label><input class="form-input" type="date"/></div>
+      <div class="form-group"><label class="form-label">Estado inicial</label>
+        <select class="form-select"><option>En proceso</option><option>Listo</option></select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeModal()">Cancelar</button>
+      <button class="btn-save" onclick="closeModal()">Guardar pedido</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/pedidos.js"></script>
+</body>
+</html>
